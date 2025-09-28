@@ -4,23 +4,25 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private Transform enemyPrefab;
-    [SerializeField] private Transform[] spawnPoints;
+    [SerializeField] private Transform _enemyPrefab;
+    [SerializeField] private Transform[] _spawnPoints;
 
     [SerializeField] private float spawnEnemyInterval = 2f;
 
-    void Start()
+    private void Start()
     {
         StartCoroutine(SpawnEnemies());
     }
 
     private IEnumerator SpawnEnemies()
     {
+        WaitForSeconds delay = new WaitForSeconds(spawnEnemyInterval);
+
         while (enabled)
         {
             SpawnNewEnemy();
 
-            yield return new WaitForSeconds(spawnEnemyInterval);
+            yield return delay;
         }
     }
 
@@ -28,13 +30,15 @@ public class Spawner : MonoBehaviour
     {
         Transform spawnPoint = GetRandomSpawnPoint();
         Quaternion spawnRotation = GetRandomRotation();
-
-        Instantiate(enemyPrefab, spawnPoint.position, spawnRotation).AddComponent<EnemyMover>();
+        Vector3 moveDirection = spawnRotation * Vector3.forward;
+                      
+        EnemyMover enemyMover = Instantiate(_enemyPrefab, spawnPoint.position, spawnRotation).AddComponent<EnemyMover>();
+        enemyMover.Initialize(moveDirection);
     }
 
     private Transform GetRandomSpawnPoint()
     {
-        return spawnPoints[Random.Range(0, spawnPoints.Length)];
+        return _spawnPoints[Random.Range(0, _spawnPoints.Length)];
     }
 
     private Quaternion GetRandomRotation()
