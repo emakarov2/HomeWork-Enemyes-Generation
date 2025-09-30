@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private Transform _enemyPrefab;
+
     [SerializeField] private Transform[] _spawnPoints;
 
     [SerializeField] private float spawnEnemyInterval = 2f;
@@ -20,20 +20,27 @@ public class Spawner : MonoBehaviour
 
         while (enabled)
         {
-            SpawnNewEnemy();
+            SpawnEnemy();
 
             yield return delay;
         }
     }
 
-    private void SpawnNewEnemy()
+    private void SpawnEnemy()
     {
         Transform spawnPoint = GetRandomSpawnPoint();
-        Quaternion spawnRotation = GetRandomRotation();
-        Vector3 moveDirection = spawnRotation * Vector3.forward;
-                      
-        EnemyMover enemyMover = Instantiate(_enemyPrefab, spawnPoint.position, spawnRotation).AddComponent<EnemyMover>();
-        enemyMover.Initialize(moveDirection);
+
+        if (spawnPoint.TryGetComponent<SpawnPoint>(out SpawnPoint spawnPointComponent))
+        {
+            if (spawnPointComponent.EnemyPrefab != null)
+            {
+                Transform newEnemy = Instantiate(spawnPointComponent.EnemyPrefab, spawnPoint.position, Quaternion.identity);
+
+                EnemyMover enemyMover = newEnemy.AddComponent<EnemyMover>();
+
+                enemyMover.SetTarget(spawnPointComponent.Target);
+            }
+        }
     }
 
     private Transform GetRandomSpawnPoint()
@@ -45,7 +52,7 @@ public class Spawner : MonoBehaviour
     {
         Vector3 randomDirection = Random.insideUnitSphere.normalized;
         randomDirection.y = 0;
-        
+
         return Quaternion.LookRotation(randomDirection);
     }
 }
