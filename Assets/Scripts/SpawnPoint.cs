@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
@@ -9,6 +7,4 @@ public class SpawnPoint : MonoBehaviour
 
     public Transform Target => _target;
     public Transform EnemyPrefab => _enemyPrefab;
-
-
 }

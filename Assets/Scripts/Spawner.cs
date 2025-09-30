@@ -1,10 +1,8 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-
     [SerializeField] private Transform[] _spawnPoints;
 
     [SerializeField] private float spawnEnemyInterval = 2f;
@@ -36,9 +34,10 @@ public class Spawner : MonoBehaviour
             {
                 Transform newEnemy = Instantiate(spawnPointComponent.EnemyPrefab, spawnPoint.position, Quaternion.identity);
 
-                EnemyMover enemyMover = newEnemy.AddComponent<EnemyMover>();
-
-                enemyMover.SetTarget(spawnPointComponent.Target);
+                newEnemy.TryGetComponent<EnemyMover>(out EnemyMover component);
+                {
+                    component.SetTarget(spawnPointComponent.Target);
+                }
             }
         }
     }
