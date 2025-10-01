@@ -11,9 +11,14 @@ public class TargetMover : MonoBehaviour
     {
         if (transform.position == _waypoints[_currentWaypointIndex].position)
         {
-            _currentWaypointIndex = (_currentWaypointIndex + 1) % _waypoints.Length;
+            _currentWaypointIndex = ++_currentWaypointIndex % _waypoints.Length;
         }
 
-        transform.position = Vector3.MoveTowards(transform.position, _waypoints[_currentWaypointIndex].position, _speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards
+            (
+            transform.position,
+            _waypoints[_currentWaypointIndex].position,
+            _speed * Time.deltaTime
+            );
     }
 }

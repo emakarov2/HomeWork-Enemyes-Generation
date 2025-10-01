@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private Transform[] _spawnPoints;
+    [SerializeField] private SpawnPoint[] _spawnPoints;
 
     [SerializeField] private float spawnEnemyInterval = 2f;
 
@@ -26,23 +26,22 @@ public class Spawner : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        Transform spawnPoint = GetRandomSpawnPoint();
+        SpawnPoint spawnPoint = GetRandomSpawnPoint();
 
-        if (spawnPoint.TryGetComponent<SpawnPoint>(out SpawnPoint spawnPointComponent))
+        if (spawnPoint != null && spawnPoint.EnemyPrefab != null)
         {
-            if (spawnPointComponent.EnemyPrefab != null)
-            {
-                Transform newEnemy = Instantiate(spawnPointComponent.EnemyPrefab, spawnPoint.position, Quaternion.identity);
+            EnemyMover newEnemy = Instantiate
+                (
+                spawnPoint.EnemyPrefab,
+                spawnPoint.transform.position,
+                Quaternion.identity
+                );
 
-                newEnemy.TryGetComponent<EnemyMover>(out EnemyMover component);
-                {
-                    component.SetTarget(spawnPointComponent.Target);
-                }
-            }
+            newEnemy.SetTarget(spawnPoint.Target);
         }
     }
-
-    private Transform GetRandomSpawnPoint()
+    
+    private SpawnPoint GetRandomSpawnPoint()
     {
         return _spawnPoints[Random.Range(0, _spawnPoints.Length)];
     }
